@@ -19,15 +19,13 @@ Latest version: ![maven central](https://shredzone.org/maven-central/org.shredzo
 * Supports [RFC 8739](https://tools.ietf.org/html/rfc8739) short-term automatic certificate renewal (experimental)
 * Supports [RFC 8823](https://tools.ietf.org/html/rfc8823) for S/MIME certificates (experimental)
 * Supports [RFC 9444](https://tools.ietf.org/html/rfc9444) for subdomain validation
-* Supports [draft-ietf-acme-ari-03](https://www.ietf.org/archive/id/draft-ietf-acme-ari-03.html) for renewal information (experimental)
+* Supports [draft-ietf-acme-ari-04](https://www.ietf.org/archive/id/draft-ietf-acme-ari-04.html) for renewal information (experimental)
 * Easy to use Java API
 * Requires JRE 11 or higher
 * Supports [Let's Encrypt](https://letsencrypt.org/), [SSL.com](https://www.ssl.com/), [ZeroSSL](https://zerossl.com), and all other CAs that comply with the ACME protocol (RFC 8555). Note that _acme4j_ is an independent project that is not supported or endorsed by any of the CAs.
 * Built with maven, packages available at [Maven Central](http://search.maven.org/#search|ga|1|g%3A%22org.shredzone.acme4j%22)
 * Extensive unit and integration tests
 * Adheres to [Semantic Versioning](https://semver.org/)
-
-If you require Java 8 or Android compatibility, you can use [acme4j v2](https://shredzone.org/maven/acme4j-v2/index.html) instead.
 
 ## Dependencies
 
