@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -98,7 +97,6 @@ public class OrderIT extends PebbleITBase {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"default", "shortlived"})
-    @Disabled("Waiting for https://github.com/letsencrypt/pebble/pull/489")
     public void testDnsAccountValidation(String profile) throws Exception {
         orderCertificate(TEST_DOMAIN, auth -> {
             var client = getBammBammClient();
