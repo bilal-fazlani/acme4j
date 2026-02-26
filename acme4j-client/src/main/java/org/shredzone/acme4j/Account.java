@@ -220,8 +220,8 @@ public class Account extends AcmeJsonResource {
      */
     public void changeKey(KeyPair newKeyPair) throws AcmeException {
         Objects.requireNonNull(newKeyPair, "newKeyPair");
-        if (Arrays.equals(getLogin().getKeyPair().getPrivate().getEncoded(),
-                        newKeyPair.getPrivate().getEncoded())) {
+        if (Arrays.equals(getLogin().getPublicKey().getEncoded(),
+                        newKeyPair.getPublic().getEncoded())) {
             throw new IllegalArgumentException("newKeyPair must actually be a new key pair");
         }
 
@@ -232,7 +232,7 @@ public class Account extends AcmeJsonResource {
 
             var payloadClaim = new JSONBuilder();
             payloadClaim.put("account", getLocation());
-            payloadClaim.putKey("oldKey", getLogin().getKeyPair().getPublic());
+            payloadClaim.putKey("oldKey", getLogin().getPublicKey());
 
             var jose = JoseUtils.createJoseRequest(keyChangeUrl, newKeyPair,
                     payloadClaim, null, null);

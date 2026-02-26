@@ -124,7 +124,7 @@ public class SessionTest {
         assertThat(login).isNotNull();
         assertThat(login.getSession()).isEqualTo(session);
         assertThat(login.getAccount().getLocation()).isEqualTo(accountLocation);
-        assertThat(login.getKeyPair()).isEqualTo(accountKeyPair);
+        assertThat(login.getPublicKey()).isEqualTo(accountKeyPair.getPublic());
     }
 
     /**

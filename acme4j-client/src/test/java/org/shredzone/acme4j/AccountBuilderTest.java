@@ -21,7 +21,6 @@ import static org.shredzone.acme4j.toolbox.TestUtils.url;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyPair;
 import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -32,6 +31,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.shredzone.acme4j.connector.RequestSigner;
 import org.shredzone.acme4j.connector.Resource;
 import org.shredzone.acme4j.provider.TestableConnectionProvider;
 import org.shredzone.acme4j.toolbox.AcmeUtils;
@@ -68,11 +68,10 @@ public class AccountBuilderTest {
             }
 
             @Override
-            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair) {
+            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer) {
                 assertThat(session).isNotNull();
                 assertThat(url).isEqualTo(resourceUrl);
                 assertThatJson(claims.toString()).isEqualTo(getJSON("newAccount").toString());
-                assertThat(keypair).isEqualTo(accountKey);
                 isUpdate = false;
                 return HttpURLConnection.HTTP_CREATED;
             }
@@ -141,10 +140,9 @@ public class AccountBuilderTest {
 
         var provider = new TestableConnectionProvider() {
             @Override
-            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair) {
+            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer) {
                 assertThat(session).isNotNull();
                 assertThat(url).isEqualTo(resourceUrl);
-                assertThat(keypair).isEqualTo(accountKey);
 
                 var binding = claims.toJSON()
                                 .get("externalAccountBinding")
@@ -215,11 +213,10 @@ public class AccountBuilderTest {
 
         var provider = new TestableConnectionProvider() {
             @Override
-            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair) {
+            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer) {
                 assertThat(session).isNotNull();
                 assertThat(url).isEqualTo(resourceUrl);
                 assertThatJson(claims.toString()).isEqualTo(getJSON("newAccountOnlyExisting").toString());
-                assertThat(keypair).isEqualTo(accountKey);
                 return HttpURLConnection.HTTP_OK;
             }
 

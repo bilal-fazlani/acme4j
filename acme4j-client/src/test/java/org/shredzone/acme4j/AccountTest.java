@@ -360,7 +360,7 @@ public class AccountTest {
                 try {
                     assertThat(url).isEqualTo(locationUrl);
                     assertThat(login).isNotNull();
-                    assertThat(login.getKeyPair()).isSameAs(oldKeyPair);
+                    assertThat(login.getPublicKey()).isSameAs(oldKeyPair.getPublic());
 
                     var json = payload.toJSON();
                     var encodedHeader = json.get("protected").asString();
@@ -402,12 +402,12 @@ public class AccountTest {
         var session = TestUtils.session(provider);
         var login = new Login(locationUrl, oldKeyPair, session);
 
-        assertThat(login.getKeyPair()).isSameAs(oldKeyPair);
+        assertThat(login.getPublicKey()).isSameAs(oldKeyPair.getPublic());
 
         var account = new Account(login, locationUrl);
         account.changeKey(newKeyPair);
 
-        assertThat(login.getKeyPair()).isSameAs(newKeyPair);
+        assertThat(login.getPublicKey()).isSameAs(newKeyPair.getPublic());
     }
 
     /**
@@ -420,7 +420,7 @@ public class AccountTest {
             var login = provider.createLogin();
 
             var account = new Account(login, locationUrl);
-            account.changeKey(login.getKeyPair());
+            account.changeKey(provider.getAccountKeyPair());
 
             provider.close();
         });

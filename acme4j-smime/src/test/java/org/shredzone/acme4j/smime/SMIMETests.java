@@ -96,7 +96,7 @@ public abstract class SMIMETests {
      */
     protected Login mockLogin() {
         var login = mock(Login.class);
-        when(login.getKeyPair()).thenReturn(mockAccountKey());
+        when(login.getPublicKey()).thenReturn(mockAccountKey().getPublic());
         return login;
     }
 

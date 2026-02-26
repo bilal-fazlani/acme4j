@@ -42,6 +42,7 @@ import org.shredzone.acme4j.exception.AcmeNotSupportedException;
 import org.shredzone.acme4j.exception.AcmeProtocolException;
 import org.shredzone.acme4j.toolbox.AcmeUtils;
 import org.shredzone.acme4j.toolbox.JSONBuilder;
+import org.shredzone.acme4j.toolbox.JoseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -330,7 +331,9 @@ public class Certificate extends AcmeResource {
                 claims.put("reason", reason.getReasonCode());
             }
 
-            conn.sendSignedRequest(resUrl, claims, session, domainKeyPair);
+            conn.sendSignedRequest(resUrl, claims, session, (url, payload, nonce) ->
+                    JoseUtils.createJoseRequest(url, domainKeyPair, payload, nonce, null));
+
         } catch (CertificateEncodingException ex) {
             throw new AcmeProtocolException("Invalid certificate", ex);
         }

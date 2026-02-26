@@ -180,7 +180,7 @@ public final class TestUtils {
      *
      * @return {@link KeyPair} for testing
      */
-    public static KeyPair createKeyPair() throws IOException {
+    public static KeyPair createKeyPair() {
         try {
             var keyFactory = KeyFactory.getInstance(KTY);
 
@@ -191,8 +191,8 @@ public final class TestUtils {
             var privateKey = keyFactory.generatePrivate(privateKeySpec);
 
             return new KeyPair(publicKey, privateKey);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-            throw new IOException(ex);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 

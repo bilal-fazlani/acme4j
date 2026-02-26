@@ -16,6 +16,8 @@ package org.shredzone.acme4j.provider;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.security.KeyPair;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +27,6 @@ import java.util.function.BiFunction;
 import org.shredzone.acme4j.Login;
 import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.challenge.Challenge;
-import java.net.http.HttpClient;
-
 import org.shredzone.acme4j.connector.Connection;
 import org.shredzone.acme4j.connector.DummyConnection;
 import org.shredzone.acme4j.connector.NetworkSettings;
@@ -43,6 +43,7 @@ public class TestableConnectionProvider extends DummyConnection implements AcmeP
     private final Map<String, BiFunction<Login, JSON, Challenge>> creatorMap = new HashMap<>();
     private final Map<String, Challenge> createdMap = new HashMap<>();
     private final JSONBuilder directory = new JSONBuilder();
+    private final KeyPair keyPair = TestUtils.createKeyPair();
     private JSONBuilder metadata = null;
 
     /**
@@ -110,7 +111,11 @@ public class TestableConnectionProvider extends DummyConnection implements AcmeP
      */
     public Login createLogin() throws IOException {
         var session = createSession();
-        return session.login(URI.create(TestUtils.ACCOUNT_URL).toURL(), TestUtils.createKeyPair());
+        return session.login(URI.create(TestUtils.ACCOUNT_URL).toURL(), keyPair);
+    }
+
+    public KeyPair getAccountKeyPair() {
+        return keyPair;
     }
 
     @Override

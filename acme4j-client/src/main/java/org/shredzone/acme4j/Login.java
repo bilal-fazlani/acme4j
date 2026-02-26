@@ -20,8 +20,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.connector.Resource;
@@ -29,6 +31,8 @@ import org.shredzone.acme4j.exception.AcmeException;
 import org.shredzone.acme4j.exception.AcmeLazyLoadingException;
 import org.shredzone.acme4j.exception.AcmeProtocolException;
 import org.shredzone.acme4j.toolbox.JSON;
+import org.shredzone.acme4j.toolbox.JSONBuilder;
+import org.shredzone.acme4j.toolbox.JoseUtils;
 
 /**
  * A {@link Login} into an account.
@@ -79,10 +83,12 @@ public class Login {
     }
 
     /**
-     * Gets the {@link KeyPair} of the ACME account.
+     * Gets the {@link PublicKey} of the ACME account.
+     *
+     * @since 5.0.0
      */
-    public KeyPair getKeyPair() {
-        return keyPair;
+    public PublicKey getPublicKey() {
+        return keyPair.getPublic();
     }
 
     /**
@@ -238,6 +244,24 @@ public class Login {
      */
     protected void setKeyPair(KeyPair keyPair) {
         this.keyPair = requireNonNull(keyPair, "keyPair");
+    }
+
+    /**
+     * Creates an ACME JOSE request. This method is meant for internal purposes only.
+     *
+     * @param url
+     *         {@link URL} of the ACME call
+     * @param payload
+     *         ACME JSON payload. If {@code null}, a POST-as-GET request is generated
+     *         instead.
+     * @param nonce
+     *         Nonce to be used. {@code null} if no nonce is to be used in the JOSE
+     *         header.
+     * @return JSON structure of the JOSE request, ready to be sent.
+     * @since 5.0.0
+     */
+    public JSONBuilder createJoseRequest(URL url, @Nullable JSONBuilder payload, @Nullable String nonce) {
+        return JoseUtils.createJoseRequest(url, keyPair, payload, nonce, getAccount().getLocation().toString());
     }
 
 }

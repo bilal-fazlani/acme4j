@@ -14,7 +14,6 @@
 package org.shredzone.acme4j.connector;
 
 import java.net.URL;
-import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -61,7 +60,7 @@ public class DummyConnection implements Connection {
     }
 
     @Override
-    public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair) {
+    public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer) {
         throw new UnsupportedOperationException();
     }
 

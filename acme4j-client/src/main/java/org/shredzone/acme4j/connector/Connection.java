@@ -115,8 +115,7 @@ public interface Connection extends AutoCloseable {
     int sendSignedRequest(URL url, JSONBuilder claims, Login login) throws AcmeException;
 
     /**
-     * Sends a signed POST request. Only requires a {@link Session}. The {@link KeyPair}
-     * is sent in a "jwk" protected header field.
+     * Sends a signed POST request. Only requires a {@link Session}.
      * <p>
      * If the server does not return a 200 class status code, an {@link AcmeException} is
      * raised matching the error.
@@ -127,11 +126,12 @@ public interface Connection extends AutoCloseable {
      *            {@link JSONBuilder} containing claims.
      * @param session
      *            {@link Session} instance to be used for tracking.
-     * @param keypair
-     *            {@link KeyPair} to be used for signing.
+     * @param signer
+     *            {@link RequestSigner} to sign the request with
      * @return HTTP 200 class status that was returned
+     * @since 5.0.0
      */
-    int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair)
+    int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer)
                 throws AcmeException;
 
     /**

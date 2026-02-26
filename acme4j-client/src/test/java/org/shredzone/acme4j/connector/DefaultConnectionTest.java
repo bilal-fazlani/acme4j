@@ -58,6 +58,7 @@ import org.shredzone.acme4j.exception.AcmeUserActionRequiredException;
 import org.shredzone.acme4j.toolbox.AcmeUtils;
 import org.shredzone.acme4j.toolbox.JSON;
 import org.shredzone.acme4j.toolbox.JSONBuilder;
+import org.shredzone.acme4j.toolbox.JoseUtils;
 import org.shredzone.acme4j.toolbox.TestUtils;
 
 /**
@@ -707,7 +708,7 @@ public class DefaultConnectionTest {
 
         var jws = new JsonWebSignature();
         jws.setCompactSerialization(CompactSerializer.serialize(encodedHeader, encodedPayload, encodedSignature));
-        jws.setKey(login.getKeyPair().getPublic());
+        jws.setKey(login.getPublicKey());
         assertThat(jws.verifySignature()).isTrue();
     }
 
@@ -763,7 +764,7 @@ public class DefaultConnectionTest {
 
         var jws = new JsonWebSignature();
         jws.setCompactSerialization(CompactSerializer.serialize(encodedHeader, encodedPayload, encodedSignature));
-        jws.setKey(login.getKeyPair().getPublic());
+        jws.setKey(login.getPublicKey());
         assertThat(jws.verifySignature()).isTrue();
     }
 
@@ -815,7 +816,8 @@ public class DefaultConnectionTest {
         try (var conn = session.connect()) {
             var cb = new JSONBuilder();
             cb.put("foo", 123).put("bar", "a-string");
-            conn.sendSignedRequest(requestUrl, cb, session, keyPair);
+            conn.sendSignedRequest(requestUrl, cb, session,
+                    (url, payload, nonce) -> JoseUtils.createJoseRequest(url, keyPair, payload, nonce, null));
         }
 
         try (var nonceHolder = session.lockNonce()) {
@@ -857,7 +859,7 @@ public class DefaultConnectionTest {
 
         var jws = new JsonWebSignature();
         jws.setCompactSerialization(CompactSerializer.serialize(encodedHeader, encodedPayload, encodedSignature));
-        jws.setKey(login.getKeyPair().getPublic());
+        jws.setKey(login.getPublicKey());
         assertThat(jws.verifySignature()).isTrue();
     }
 
@@ -870,7 +872,8 @@ public class DefaultConnectionTest {
 
         assertThrows(AcmeException.class, () -> {
             try (var conn = session.connect()) {
-                conn.sendSignedRequest(requestUrl, new JSONBuilder(), session, keyPair);
+                conn.sendSignedRequest(requestUrl, new JSONBuilder(), session,
+                        (url, payload, nonce) -> JoseUtils.createJoseRequest(url, keyPair, payload, nonce, null));
             }
         });
     }

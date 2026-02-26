@@ -4,6 +4,7 @@ This document will help you migrate your code to the latest _acme4j_ version.
 
 ## Migration to Version 5.0.0
 
+- `Login.getKeyPair()` has been removed. This is a security precaution. You can access the login's public key with the new method `Login.getPublicKey()`. Private keys that were passed in as parameters cannot be accessed with the _acme4j_ API anymore.
 - `Login.getAccountLocation()` has been removed. Use `Login.getAccount().getLocation()` instead.
 
 ## Migration to Version 4.0.0

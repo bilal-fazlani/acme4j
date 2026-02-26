@@ -24,7 +24,6 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyPair;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -56,7 +55,6 @@ import org.shredzone.acme4j.exception.AcmeUserActionRequiredException;
 import org.shredzone.acme4j.toolbox.AcmeUtils;
 import org.shredzone.acme4j.toolbox.JSON;
 import org.shredzone.acme4j.toolbox.JSONBuilder;
-import org.shredzone.acme4j.toolbox.JoseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,26 +176,26 @@ public class DefaultConnection implements Connection {
 
     @Override
     public int sendCertificateRequest(URL url, Login login) throws AcmeException {
-        return sendSignedRequest(url, null, login.getSession(), login.getKeyPair(),
-                login.getAccount().getLocation(), MIME_CERTIFICATE_CHAIN);
+        return sendSignedRequest(url, null, login.getSession(), MIME_CERTIFICATE_CHAIN,
+                login::createJoseRequest);
     }
 
     @Override
     public int sendSignedPostAsGetRequest(URL url, Login login) throws AcmeException {
-        return sendSignedRequest(url, null, login.getSession(), login.getKeyPair(),
-                login.getAccount().getLocation(), MIME_JSON);
+        return sendSignedRequest(url, null, login.getSession(), MIME_JSON,
+                login::createJoseRequest);
     }
 
     @Override
     public int sendSignedRequest(URL url, JSONBuilder claims, Login login) throws AcmeException {
-        return sendSignedRequest(url, claims, login.getSession(), login.getKeyPair(),
-                login.getAccount().getLocation(), MIME_JSON);
+        return sendSignedRequest(url, claims, login.getSession(), MIME_JSON,
+                login::createJoseRequest);
     }
 
     @Override
-    public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair)
+    public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer)
             throws AcmeException {
-        return sendSignedRequest(url, claims, session, keypair, null, MIME_JSON);
+        return sendSignedRequest(url, claims, session, MIME_JSON, signer);
     }
 
     @Override
@@ -351,29 +349,23 @@ public class DefaultConnection implements Connection {
      * @param claims
      *         {@link JSONBuilder} containing claims. {@code null} for POST-as-GET
      *         request.
-     * @param session
-     *         {@link Session} instance to be used for signing and tracking
-     * @param keypair
-     *         {@link KeyPair} to be used for signing
-     * @param accountLocation
-     *         If set, the account location is set as "kid" header. If {@code null}, the
-     *         public key is set as "jwk" header.
      * @param accept
      *         Accept header
      * @return HTTP 200 class status that was returned
      */
-    protected int sendSignedRequest(URL url, @Nullable JSONBuilder claims, Session session,
-                                    KeyPair keypair, @Nullable URL accountLocation, String accept) throws AcmeException {
+    protected int sendSignedRequest(URL url, @Nullable JSONBuilder claims,
+                                    Session session, String accept, RequestSigner signer)
+            throws AcmeException {
         Objects.requireNonNull(url, "url");
         Objects.requireNonNull(session, "session");
-        Objects.requireNonNull(keypair, "keypair");
         Objects.requireNonNull(accept, "accept");
+        Objects.requireNonNull(signer, "signer");
         assertConnectionIsClosed();
 
         var attempt = 1;
         while (true) {
             try {
-                return performRequest(url, claims, session, keypair, accountLocation, accept);
+                return performRequest(url, claims, session, accept, signer);
             } catch (AcmeServerException ex) {
                 if (!BAD_NONCE_ERROR.equals(ex.getType())) {
                     throw ex;
@@ -395,33 +387,18 @@ public class DefaultConnection implements Connection {
      * @param claims
      *         {@link JSONBuilder} containing claims. {@code null} for POST-as-GET
      *         request.
-     * @param session
-     *         {@link Session} instance to be used for signing and tracking
-     * @param keypair
-     *         {@link KeyPair} to be used for signing
-     * @param accountLocation
-     *         If set, the account location is set as "kid" header. If {@code null}, the
-     *         public key is set as "jwk" header.
      * @param accept
      *         Accept header
      * @return HTTP 200 class status that was returned
      */
     private int performRequest(URL url, @Nullable JSONBuilder claims, Session session,
-                               KeyPair keypair, @Nullable URL accountLocation, String accept)
-            throws AcmeException {
+                               String accept, RequestSigner signer) throws AcmeException {
         try (var nonceHolder = session.lockNonce()) {
             if (nonceHolder.getNonce() == null) {
                 resetNonce(session);
             }
 
-            var jose = JoseUtils.createJoseRequest(
-                    url,
-                    keypair,
-                    claims,
-                    nonceHolder.getNonce(),
-                    accountLocation != null ? accountLocation.toString() : null
-            );
-
+            var jose = signer.createRequest(url, claims, nonceHolder.getNonce());
             var outputData = jose.toString();
 
             sendRequest(session, url, builder -> {

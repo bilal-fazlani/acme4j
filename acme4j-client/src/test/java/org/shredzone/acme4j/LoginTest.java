@@ -55,7 +55,7 @@ public class LoginTest {
 
         var login = new Login(location, keypair, session);
         assertThat(login.getAccount().getLocation()).isEqualTo(location);
-        assertThat(login.getKeyPair()).isEqualTo(keypair);
+        assertThat(login.getPublicKey()).isEqualTo(keypair.getPublic());
         assertThat(login.getSession()).isEqualTo(session);
 
         assertThat(login.getAccount()).isNotNull();
@@ -101,11 +101,11 @@ public class LoginTest {
         var session = TestUtils.session();
 
         var login = new Login(location, keypair, session);
-        assertThat(login.getKeyPair()).isEqualTo(keypair);
+        assertThat(login.getPublicKey()).isEqualTo(keypair.getPublic());
 
         var keypair2 = TestUtils.createKeyPair();
         login.setKeyPair(keypair2);
-        assertThat(login.getKeyPair()).isEqualTo(keypair2);
+        assertThat(login.getPublicKey()).isEqualTo(keypair2.getPublic());
     }
 
     /**

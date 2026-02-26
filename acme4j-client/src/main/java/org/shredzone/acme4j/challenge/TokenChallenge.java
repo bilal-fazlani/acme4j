@@ -68,7 +68,7 @@ public class TokenChallenge extends Challenge {
      * @since 2.12
      */
     protected String keyAuthorizationFor(String token) {
-        var pk = getLogin().getKeyPair().getPublic();
+        var pk = getLogin().getPublicKey();
         return token + '.' + base64UrlEncode(JoseUtils.thumbprint(pk));
     }
 

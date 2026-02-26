@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.shredzone.acme4j.connector.RequestSigner;
 import org.shredzone.acme4j.connector.Resource;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.shredzone.acme4j.provider.TestableConnectionProvider;
@@ -262,11 +262,10 @@ public class CertificateTest {
 
         var provider = new TestableConnectionProvider() {
             @Override
-            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, KeyPair keypair) {
+            public int sendSignedRequest(URL url, JSONBuilder claims, Session session, RequestSigner signer) {
                 assertThat(url).isEqualTo(resourceUrl);
                 assertThatJson(claims.toString()).isEqualTo(getJSON("revokeCertificateWithReasonRequest").toString());
                 assertThat(session).isNotNull();
-                assertThat(keypair).isEqualTo(certKeyPair);
                 return HttpURLConnection.HTTP_OK;
             }
         };

@@ -290,7 +290,8 @@ public class AccountBuilder {
                 claims.put("onlyReturnExisting", onlyExisting);
             }
 
-            conn.sendSignedRequest(resourceUrl, claims, session, keyPair);
+            conn.sendSignedRequest(resourceUrl, claims, session, (url, payload, nonce) ->
+                    JoseUtils.createJoseRequest(url, keyPair, payload, nonce, null));
 
             var login = new Login(conn.getLocation(), keyPair, session);
             login.getAccount().setJSON(conn.readJsonResponse());
