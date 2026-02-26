@@ -6,11 +6,11 @@ There are different kinds of challenges. The most simple is maybe the HTTP chall
 
 The ACME specifications define these standard challenges:
 
-* [dns-01](dns-01.md)
-* [http-01](http-01.md)
+* [dns-01](dns-01.md) ([RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555#section-8.4), section 8.4)
+* [http-01](http-01.md) ([RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555#section-8.3), section 8.3)
 
 _acme4j_ also supports these non-standard challenges:
 
 * [dns-account-01](dns-account-01.md) ([draft-ietf-acme-dns-account-label-02](https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-label/))
-* [email-reply-00](email-reply-00.md)
-* [tls-alpn-01](tls-alpn-01.md)
+* [email-reply-00](email-reply-00.md) ([RFC 8823](https://tools.ietf.org/html/rfc8823))
+* [tls-alpn-01](tls-alpn-01.md) ([RFC 8737](https://tools.ietf.org/html/rfc8737))

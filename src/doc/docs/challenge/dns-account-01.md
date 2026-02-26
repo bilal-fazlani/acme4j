@@ -5,9 +5,7 @@ With the `dns-account-01` challenge, you prove to the CA that you are able to co
 This challenge is specified in [draft-ietf-acme-dns-account-label-02](https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-label/).
 
 !!! warning
-    The support of this challenge is **experimental**. The implementation is only unit tested for compliance with the specification, but is not integration tested yet. There may be breaking changes in this part of the API in future releases.
-
-With the `dns-account-01` challenge, you prove to the CA that you are able to control the DNS records of the domain to be authorized, by creating a TXT record with a signed content.
+    The support of this challenge is **experimental**. The implementation is only unit tested for compliance with the specification, but is not integration tested yet. There may be breaking changes in this part of the API in future releases. Semantic versioning does not apply here.
 
 `DnsAccount01Challenge` provides a digest string and a resource record name:
 
