@@ -34,6 +34,7 @@ import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.DnsAccount01Challenge;
+import org.shredzone.acme4j.challenge.DnsPersist01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.challenge.TlsAlpn01Challenge;
 import org.shredzone.acme4j.challenge.TokenChallenge;
@@ -271,6 +272,10 @@ public class AbstractAcmeProviderTest {
         var c4 = provider.createChallenge(login, getJSON("dnsAccount01Challenge"));
         assertThat(c4).isNotNull();
         assertThat(c4).isInstanceOf(DnsAccount01Challenge.class);
+
+        var c8 = provider.createChallenge(login, getJSON("dnsPersist01Challenge"));
+        assertThat(c8).isNotNull();
+        assertThat(c8).isInstanceOf(DnsPersist01Challenge.class);
 
         var c5 = provider.createChallenge(login, getJSON("tlsAlpnChallenge"));
         assertThat(c5).isNotNull();

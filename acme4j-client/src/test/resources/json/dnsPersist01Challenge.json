@@ -1,0 +1,6 @@
+{
+  "type": "dns-persist-01",
+  "url": "https://ca.example/acme/authz/1234/0",
+  "status": "pending",
+  "issuer-domain-names": ["authority.example", "ca.example.net"]
+}
