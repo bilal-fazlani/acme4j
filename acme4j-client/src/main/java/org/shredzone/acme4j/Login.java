@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
-import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.shredzone.acme4j.challenge.Challenge;
@@ -52,7 +51,6 @@ import org.shredzone.acme4j.toolbox.JSON;
 public class Login {
 
     private final Session session;
-    private final URL accountLocation;
     private final Account account;
     private KeyPair keyPair;
 
@@ -67,10 +65,9 @@ public class Login {
      *            {@link Session} to be used
      */
     public Login(URL accountLocation, KeyPair keyPair, Session session) {
-        this.accountLocation = Objects.requireNonNull(accountLocation, "accountLocation");
-        this.keyPair = Objects.requireNonNull(keyPair, "keyPair");
-        this.session = Objects.requireNonNull(session, "session");
-        this.account = new Account(this);
+        this.keyPair = requireNonNull(keyPair, "keyPair");
+        this.session = requireNonNull(session, "session");
+        this.account = new Account(this, requireNonNull(accountLocation, "accountLocation"));
     }
 
     /**
@@ -86,13 +83,6 @@ public class Login {
      */
     public KeyPair getKeyPair() {
         return keyPair;
-    }
-
-    /**
-     * Gets the location {@link URL} of the account.
-     */
-    public URL getAccountLocation() {
-        return accountLocation;
     }
 
     /**
@@ -247,7 +237,7 @@ public class Login {
      * instance, but is not set on server side!
      */
     protected void setKeyPair(KeyPair keyPair) {
-        this.keyPair = Objects.requireNonNull(keyPair, "keyPair");
+        this.keyPair = requireNonNull(keyPair, "keyPair");
     }
 
 }

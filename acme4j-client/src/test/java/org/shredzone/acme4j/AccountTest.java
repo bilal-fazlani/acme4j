@@ -99,10 +99,10 @@ public class AccountTest {
         };
 
         var login = provider.createLogin();
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         account.fetch();
 
-        assertThat(login.getAccountLocation()).isEqualTo(locationUrl);
+        assertThat(login.getAccount().getLocation()).isEqualTo(locationUrl);
         assertThat(account.getLocation()).isEqualTo(locationUrl);
         assertThat(account.getTermsOfServiceAgreed().orElseThrow()).isTrue();
         assertThat(account.getContacts()).hasSize(1);
@@ -153,7 +153,7 @@ public class AccountTest {
             }
         };
 
-        var account = new Account(provider.createLogin());
+        var account = new Account(provider.createLogin(), locationUrl);
 
         // Lazy loading
         assertThat(requestWasSent.get()).isFalse();
@@ -202,7 +202,7 @@ public class AccountTest {
 
         var domainName = "example.org";
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var auth = account.preAuthorize(Identifier.dns(domainName));
 
         assertThat(auth.getIdentifier().getDomain()).isEqualTo(domainName);
@@ -230,7 +230,7 @@ public class AccountTest {
 
         assertThat(login.getSession().getMetadata().isSubdomainAuthAllowed()).isFalse();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
 
         assertThatExceptionOfType(AcmeNotSupportedException.class).isThrownBy(() ->
                 account.preAuthorize(Identifier.dns("example.org").allowSubdomainAuth())
@@ -272,7 +272,7 @@ public class AccountTest {
 
         var domainName = "example.org";
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var auth = account.preAuthorize(Identifier.dns(domainName).allowSubdomainAuth());
 
         assertThat(login.getSession().getMetadata().isSubdomainAuthAllowed()).isTrue();
@@ -312,7 +312,7 @@ public class AccountTest {
 
         provider.putTestResource(Resource.NEW_AUTHZ, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
 
         var ex = assertThrows(AcmeServerException.class, () ->
             account.preAuthorizeDomain("example.org")
@@ -404,7 +404,7 @@ public class AccountTest {
 
         assertThat(login.getKeyPair()).isSameAs(oldKeyPair);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         account.changeKey(newKeyPair);
 
         assertThat(login.getKeyPair()).isSameAs(newKeyPair);
@@ -419,7 +419,7 @@ public class AccountTest {
             var provider = new TestableConnectionProvider();
             var login = provider.createLogin();
 
-            var account = new Account(login);
+            var account = new Account(login, locationUrl);
             account.changeKey(login.getKeyPair());
 
             provider.close();
@@ -447,7 +447,7 @@ public class AccountTest {
             }
         };
 
-        var account = new Account(provider.createLogin());
+        var account = new Account(provider.createLogin(), locationUrl);
         account.deactivate();
 
         assertThat(account.getStatus()).isEqualTo(Status.DEACTIVATED);
@@ -463,7 +463,7 @@ public class AccountTest {
         var provider = new TestableConnectionProvider();
         var login = provider.createLogin();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         assertThat(account.newOrder()).isNotNull();
 
         provider.close();
@@ -494,7 +494,7 @@ public class AccountTest {
             }
         };
 
-        var account = new Account(provider.createLogin());
+        var account = new Account(provider.createLogin(), locationUrl);
         account.setJSON(getJSON("newAccount"));
 
         var editable = account.modify();

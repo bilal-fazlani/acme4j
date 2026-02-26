@@ -49,7 +49,7 @@ public class AccountIT extends PebbleITBase {
                         .useKeyPair(keyPair)
                         .createLogin(session);
 
-        var location = login.getAccountLocation();
+        var location = login.getAccount().getLocation();
         assertIsPebbleUrl(location);
 
         // Check registered data
@@ -61,7 +61,6 @@ public class AccountIT extends PebbleITBase {
         // Bind another Account object
         var session2 = new Session(pebbleURI());
         var login2 = new Login(location, keyPair, session2);
-        assertThat(login2.getAccountLocation()).isEqualTo(location);
         var acct2 = login2.getAccount();
         assertThat(acct2.getLocation()).isEqualTo(location);
         assertThat(acct2.getContacts()).contains(URI.create("mailto:acme@example.com"));
@@ -83,7 +82,7 @@ public class AccountIT extends PebbleITBase {
                         .useKeyPair(keyPair)
                         .createLogin(session1);
 
-        var location1 = login1.getAccountLocation();
+        var location1 = login1.getAccount().getLocation();
         assertIsPebbleUrl(location1);
 
         // Try to register the same account again
@@ -94,7 +93,7 @@ public class AccountIT extends PebbleITBase {
                         .useKeyPair(keyPair)
                         .createLogin(session2);
 
-        var location2 = login2.getAccountLocation();
+        var location2 = login2.getAccount().getLocation();
         assertIsPebbleUrl(location2);
 
         assertThat(location1).isEqualTo(location2);
@@ -113,7 +112,7 @@ public class AccountIT extends PebbleITBase {
                         .useKeyPair(keyPair)
                         .createLogin(session1);
 
-        var location1 = login1.getAccountLocation();
+        var location1 = login1.getAccount().getLocation();
         assertIsPebbleUrl(location1);
 
         var session2 = new Session(pebbleURI());
@@ -122,7 +121,7 @@ public class AccountIT extends PebbleITBase {
                         .useKeyPair(keyPair)
                         .createLogin(session2);
 
-        var location2 = login2.getAccountLocation();
+        var location2 = login2.getAccount().getLocation();
         assertIsPebbleUrl(location2);
 
         assertThat(location1).isEqualTo(location2);

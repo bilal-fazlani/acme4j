@@ -123,7 +123,7 @@ public class SessionTest {
         var login = session.login(accountLocation, accountKeyPair);
         assertThat(login).isNotNull();
         assertThat(login.getSession()).isEqualTo(session);
-        assertThat(login.getAccountLocation()).isEqualTo(accountLocation);
+        assertThat(login.getAccount().getLocation()).isEqualTo(accountLocation);
         assertThat(login.getKeyPair()).isEqualTo(accountKeyPair);
     }
 

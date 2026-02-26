@@ -179,19 +179,19 @@ public class DefaultConnection implements Connection {
     @Override
     public int sendCertificateRequest(URL url, Login login) throws AcmeException {
         return sendSignedRequest(url, null, login.getSession(), login.getKeyPair(),
-                login.getAccountLocation(), MIME_CERTIFICATE_CHAIN);
+                login.getAccount().getLocation(), MIME_CERTIFICATE_CHAIN);
     }
 
     @Override
     public int sendSignedPostAsGetRequest(URL url, Login login) throws AcmeException {
         return sendSignedRequest(url, null, login.getSession(), login.getKeyPair(),
-                login.getAccountLocation(), MIME_JSON);
+                login.getAccount().getLocation(), MIME_JSON);
     }
 
     @Override
     public int sendSignedRequest(URL url, JSONBuilder claims, Login login) throws AcmeException {
         return sendSignedRequest(url, claims, login.getSession(), login.getKeyPair(),
-                login.getAccountLocation(), MIME_JSON);
+                login.getAccount().getLocation(), MIME_JSON);
     }
 
     @Override

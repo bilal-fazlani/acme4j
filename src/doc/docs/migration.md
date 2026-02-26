@@ -2,6 +2,10 @@
 
 This document will help you migrate your code to the latest _acme4j_ version.
 
+## Migration to Version 5.0.0
+
+- `Login.getAccountLocation()` has been removed. Use `Login.getAccount().getLocation()` instead.
+
 ## Migration to Version 4.0.0
 
 - Removed all methods that were marked as deprecated.

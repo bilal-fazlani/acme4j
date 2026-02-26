@@ -76,7 +76,7 @@ public class OrderBuilderTest {
 
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var order = account.newOrder()
                         .domains("example.com", "www.example.com")
                         .domain("example.org")
@@ -164,7 +164,7 @@ public class OrderBuilderTest {
         ).toMap());
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var order = account.newOrder()
                         .domain("example.org")
                         .autoRenewal()
@@ -224,7 +224,7 @@ public class OrderBuilderTest {
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
         provider.putMetadata("subdomainAuthAllowed", true);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var order = account.newOrder()
                 .identifier(Identifier.dns("foo.bar.example.com").withAncestorDomain("example.com"))
                 .notBefore(notBefore)
@@ -262,7 +262,7 @@ public class OrderBuilderTest {
 
         assertThat(login.getSession().getMetadata().isSubdomainAuthAllowed()).isFalse();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         assertThatExceptionOfType(AcmeNotSupportedException.class).isThrownBy(() ->
                 account.newOrder()
                         .identifier(Identifier.dns("foo.bar.example.com").withAncestorDomain("example.com"))
@@ -283,7 +283,7 @@ public class OrderBuilderTest {
 
             var login = provider.createLogin();
 
-            var account = new Account(login);
+            var account = new Account(login, locationUrl);
             account.newOrder()
                             .domain("example.org")
                             .autoRenewal()
@@ -303,7 +303,7 @@ public class OrderBuilderTest {
         var provider = new TestableConnectionProvider();
         var login = provider.createLogin();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
 
         assertThrows(IllegalArgumentException.class, () -> {
             OrderBuilder ob = account.newOrder().autoRenewal();
@@ -370,7 +370,7 @@ public class OrderBuilderTest {
         ).toMap());
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         var order = account.newOrder()
                 .domain("example.org")
                 .profile("classic")
@@ -397,7 +397,7 @@ public class OrderBuilderTest {
 
         var login = provider.createLogin();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         assertThatExceptionOfType(AcmeNotSupportedException.class).isThrownBy(() -> {
             account.newOrder()
                     .domain("example.org")
@@ -418,7 +418,7 @@ public class OrderBuilderTest {
 
         var login = provider.createLogin();
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         assertThatExceptionOfType(AcmeNotSupportedException.class).isThrownBy(() -> {
             account.newOrder()
                     .domain("example.org")
@@ -459,7 +459,7 @@ public class OrderBuilderTest {
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
         provider.putTestResource(Resource.RENEWAL_INFO, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         account.newOrder()
                 .domain("example.org")
                 .replaces("aYhba4dGQEHhs3uEe6CuLN4ByNQ.AIdlQyE")
@@ -486,7 +486,7 @@ public class OrderBuilderTest {
 
         provider.putTestResource(Resource.NEW_ORDER, resourceUrl);
 
-        var account = new Account(login);
+        var account = new Account(login, locationUrl);
         assertThatExceptionOfType(AcmeNotSupportedException.class).isThrownBy(() -> {
                     account.newOrder()
                             .domain("example.org")

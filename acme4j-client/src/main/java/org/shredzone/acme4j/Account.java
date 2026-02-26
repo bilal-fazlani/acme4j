@@ -15,6 +15,7 @@ package org.shredzone.acme4j;
 
 import java.io.Serial;
 import java.net.URI;
+import java.net.URL;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +52,8 @@ public class Account extends AcmeJsonResource {
     private static final String KEY_STATUS = "status";
     private static final String KEY_EXTERNAL_ACCOUNT_BINDING = "externalAccountBinding";
 
-    protected Account(Login login) {
-        super(login, login.getAccountLocation());
+    protected Account(Login login, URL location) {
+        super(login, location);
     }
 
     /**

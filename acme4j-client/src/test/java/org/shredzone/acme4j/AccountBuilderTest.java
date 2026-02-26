@@ -98,8 +98,6 @@ public class AccountBuilderTest {
         var session = provider.createSession();
         var login = builder.createLogin(session);
 
-        assertThat(login.getAccountLocation()).isEqualTo(locationUrl);
-
         var account = login.getAccount();
         assertThat(account.getTermsOfServiceAgreed().orElseThrow()).isTrue();
         assertThat(account.getLocation()).isEqualTo(locationUrl);
@@ -191,7 +189,7 @@ public class AccountBuilderTest {
         var session = provider.createSession();
         var login = builder.createLogin(session);
 
-        assertThat(login.getAccountLocation()).isEqualTo(locationUrl);
+        assertThat(login.getAccount().getLocation()).isEqualTo(locationUrl);
 
         provider.close();
     }
@@ -245,7 +243,7 @@ public class AccountBuilderTest {
         var session = provider.createSession();
         var login = builder.createLogin(session);
 
-        assertThat(login.getAccountLocation()).isEqualTo(locationUrl);
+        assertThat(login.getAccount().getLocation()).isEqualTo(locationUrl);
 
         provider.close();
     }

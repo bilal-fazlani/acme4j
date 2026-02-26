@@ -54,7 +54,7 @@ public class LoginTest {
         var session = TestUtils.session();
 
         var login = new Login(location, keypair, session);
-        assertThat(login.getAccountLocation()).isEqualTo(location);
+        assertThat(login.getAccount().getLocation()).isEqualTo(location);
         assertThat(login.getKeyPair()).isEqualTo(keypair);
         assertThat(login.getSession()).isEqualTo(session);
 
