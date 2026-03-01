@@ -151,6 +151,14 @@ class DnsPersist01ChallengeTest {
         assertThatExceptionOfType(AcmeProtocolException.class)
                 .isThrownBy(challenge4::getIssuerDomainNames)
                 .withMessage("issuer-domain-names size limit exceeded: 11 > 10");
+
+        // Must fail if issuer-domain-names contains a trailing dot
+        var json5 = new TreeMap<>(json);
+        json5.put("issuer-domain-names", new String[] {"foo.example.com."});
+        var challenge5 = new DnsPersist01Challenge(login, JSON.fromMap(json5));
+        assertThatExceptionOfType(AcmeProtocolException.class)
+                .isThrownBy(challenge5::getIssuerDomainNames)
+                .withMessage("issuer-domain-names must not have trailing dots");
     }
 
     private String[] createDomainList(int length) {

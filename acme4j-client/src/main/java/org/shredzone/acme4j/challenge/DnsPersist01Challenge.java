@@ -73,6 +73,7 @@ public class DnsPersist01Challenge extends Challenge {
         if (issuerDomainNames == null) {
             var domainNames = getJSON().get(KEY_ISSUER_DOMAIN_NAMES).asArray().stream()
                     .map(JSON.Value::asString)
+                    .map(AcmeUtils::toAce)
                     .toList();
 
             if (domainNames.isEmpty()) {
@@ -84,6 +85,10 @@ public class DnsPersist01Challenge extends Challenge {
                 // malform check is mandatory according to the specification
                 throw new AcmeProtocolException("issuer-domain-names size limit exceeded: "
                         + domainNames.size() + " > " + ISSUER_SIZE_LIMIT);
+            }
+
+            if (domainNames.stream().anyMatch(it -> it.endsWith("."))) {
+                throw new AcmeProtocolException("issuer-domain-names must not have trailing dots");
             }
 
             if (!domainNames.stream().allMatch(it -> it.length() <= DOMAIN_LENGTH_LIMIT)) {
