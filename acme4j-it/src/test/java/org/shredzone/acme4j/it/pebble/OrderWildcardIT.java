@@ -26,6 +26,7 @@ import org.shredzone.acme4j.AccountBuilder;
 import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
+import org.shredzone.acme4j.challenge.DnsPersist01Challenge;
 
 /**
  * Tests a complete wildcard certificate order. Wildcard certificates currently only
@@ -78,6 +79,80 @@ public class OrderWildcardIT extends PebbleITBase {
             var challengeDomainName = challenge.getRRName(TEST_DOMAIN);
 
             client.dnsAddTxtRecord(challengeDomainName, challenge.getDigest());
+
+            try {
+                challenge.trigger();
+                challenge.waitForCompletion(TIMEOUT);
+                assertThat(challenge.getStatus()).isEqualTo(Status.VALID);
+            } finally {
+                performCleanup();
+            }
+
+            auth.fetch();
+            assertThat(auth.getStatus()).isEqualTo(Status.VALID);
+        }
+
+        order.waitUntilReady(TIMEOUT);
+        assertThat(order.getStatus()).isEqualTo(Status.READY);
+
+        order.execute(domainKeyPair);
+        order.waitForCompletion(TIMEOUT);
+        assertThat(order.getStatus()).isEqualTo(Status.VALID);
+
+        var cert = order.getCertificate().getCertificate();
+        assertThat(cert).isNotNull();
+        assertThat(cert.getNotAfter()).isNotEqualTo(notBefore);
+        assertThat(cert.getNotBefore()).isNotEqualTo(notAfter);
+
+        var san = cert.getSubjectAlternativeNames().stream()
+                .filter(it -> ((Number) it.get(0)).intValue() == GeneralName.dNSName)
+                .map(it -> (String) it.get(1))
+                .collect(toList());
+        assertThat(san).contains(TEST_DOMAIN, TEST_WILDCARD_DOMAIN);
+    }
+
+    /**
+     * Test if a wildcard certificate can be ordered via dns-persist-01 challenge.
+     */
+    @Test
+    public void testDnsPersistValidation() throws Exception {
+        var client = getBammBammClient();
+        var keyPair = createKeyPair();
+        var session = new Session(pebbleURI());
+
+        var account = new AccountBuilder()
+                .agreeToTermsOfService()
+                .useKeyPair(keyPair)
+                .create(session);
+
+        var domainKeyPair = createKeyPair();
+
+        var notBefore = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+        var notAfter = notBefore.plus(Duration.ofDays(20L));
+
+        var order = account.newOrder()
+                .domain(TEST_WILDCARD_DOMAIN)
+                .domain(TEST_DOMAIN)
+                .notBefore(notBefore)
+                .notAfter(notAfter)
+                .create();
+        assertThat(order.getNotBefore().orElseThrow()).isEqualTo(notBefore);
+        assertThat(order.getNotAfter().orElseThrow()).isEqualTo(notAfter);
+        assertThat(order.getStatus()).isEqualTo(Status.PENDING);
+
+        for (var auth : order.getAuthorizations()) {
+            assertThat(auth.getIdentifier().getDomain()).isEqualTo(TEST_DOMAIN);
+
+            if (auth.getStatus() == Status.VALID) {
+                continue;
+            }
+
+            var challenge = auth.findChallenge(DnsPersist01Challenge.class).orElseThrow();
+
+            var challengeDomainName = challenge.getRRName(TEST_DOMAIN);
+
+            client.dnsAddTxtRecord(challengeDomainName,
+                    challenge.buildRData().wildcard().noQuotes().build());
 
             try {
                 challenge.trigger();
